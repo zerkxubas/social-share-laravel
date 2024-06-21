@@ -47,8 +47,8 @@ jobs:
     - name: Create GitHub release
       uses: softprops/action-gh-release@v2
       with:
-        tag_name: ${{ steps.tag_version.outputs.new_version }}
-        name: ${{ steps.tag_version.outputs.new_version }}
-        body: "Automated release ${{ steps.tag_version.outputs.new_version }}"
+        tag_name: ${{ github.ref_name }}
+        name: ${{ github.ref_name }}
+        body: "Automated release ${{ github.ref_name }}"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,0 +1,43 @@
+name: Release Workflow
+
+on:
+  workflow_run:
+    workflows: ["CI (Continuous Integration)"]
+    types:
+      - completed
+
+jobs:
+  release:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Bump version and create tag
+      id: tag_version
+      run: |
+        git config --global user.email "zerkxubas@gmail.com"
+        git config --global user.name "Subash Sharma"
+        git fetch --tags
+
+        # Bump version using your preferred method, for example:
+        current_version=$(git describe --tags `git rev-list --tags --max-count=1`)
+        if [ -z "$current_version" ]; then
+          new_version="v1.0.0"
+        else
+          new_version=$(echo $current_version | awk -F. '{printf "v%d.%d.%d", $1, $2, $3+1}')
+        fi
+
+        git tag $new_version
+        git push origin $new_version
+
+    - name: Create GitHub release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: ${{ steps.tag_version.outputs.new_version }}
+        name: ${{ steps.tag_version.outputs.new_version }}
+        body: "Automated release ${{ steps.tag_version.outputs.new_version }}"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

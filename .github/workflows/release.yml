@@ -41,8 +41,8 @@ jobs:
         git tag $new_version
         git push origin $new_version
 
-      # Handle cases where no tags exist yet
-      continue-on-error: true
+    - name: Wait for tag propagation
+      run: sleep 10s
 
     - name: Create GitHub release
       if: ${{ success() }}

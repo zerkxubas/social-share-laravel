@@ -45,7 +45,6 @@ jobs:
       run: sleep 10s
 
     - name: Create GitHub release
-      if: ${{ success() }}
       uses: softprops/action-gh-release@v2
       with:
         tag_name: ${{ steps.tag_version.outputs.new_version }}

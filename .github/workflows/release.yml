@@ -40,4 +40,4 @@ jobs:
         name: ${{ steps.tag_version.outputs.new_version }}
         body: "Automated release ${{ steps.tag_version.outputs.new_version }}"
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}

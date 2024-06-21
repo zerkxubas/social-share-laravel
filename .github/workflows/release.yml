@@ -27,12 +27,17 @@ jobs:
     - name: Bump version and create tag
       id: tag_version
       run: |
+        git fetch --tags
+    
         current_version=$(git describe --tags `git rev-list --tags --max-count=1`)
         if [ -z "$current_version" ]; then
           new_version="v1.0.0"
         else
-          new_version=$(echo $current_version | awk -F. '{printf "v%d.%d.%d", $1, $2, $3+1}')
+          current_version=$(echo "$current_version" | sed 's/v//')  # Remove 'v' prefix
+          IFS='.' read -r major minor patch <<< "$current_version"
+          new_version="v$((major)).$((minor)).$((patch + 1))"
         fi
+    
         git tag $new_version
         git push origin $new_version
 

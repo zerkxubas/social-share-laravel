@@ -15,25 +15,32 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: Bump version and create tag
-      id: tag_version
+    - name: Set Git Config
       run: |
         git config --global user.email "zerkxubas@gmail.com"
         git config --global user.name "Subash Sharma"
-        git fetch --tags
+        git config --list  # Add this line for debugging
 
-        # Bump version using your preferred method, for example:
+    - name: Fetch tags
+      run: git fetch --tags
+
+    - name: Bump version and create tag
+      id: tag_version
+      run: |
         current_version=$(git describe --tags `git rev-list --tags --max-count=1`)
         if [ -z "$current_version" ]; then
           new_version="v1.0.0"
         else
           new_version=$(echo $current_version | awk -F. '{printf "v%d.%d.%d", $1, $2, $3+1}')
         fi
-
         git tag $new_version
         git push origin $new_version
 
+      # Handle cases where no tags exist yet
+      continue-on-error: true
+
     - name: Create GitHub release
+      if: ${{ success() }}
       uses: softprops/action-gh-release@v1
       with:
         tag_name: ${{ steps.tag_version.outputs.new_version }}

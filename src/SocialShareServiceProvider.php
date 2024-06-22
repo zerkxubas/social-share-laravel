@@ -15,7 +15,7 @@ class SocialShareServiceProvider extends ServiceProvider
     {
         // Publishes the configuration file
         $this->publishes([
-            __DIR__.'/../../config/socialshare.php' => config_path('socialshare.php'),
+            __DIR__.'/../config/socialshare.php' => config_path('socialshare.php'),
         ], 'socialshare');
     }
 
